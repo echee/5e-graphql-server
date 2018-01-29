@@ -1,0 +1,26 @@
+type Class {
+  id: String!
+  name: String!
+  hitDie: Int!
+  subclasses: [Subclass]
+}
+
+type Query {
+  classes: [Class]!
+  class(id: ID!): Class
+}
+
+type Subclass {
+  index: Int!
+  name: String!
+  subclassFlavor: String!
+  desc: [String!]
+  features: [Feature]
+}
+
+type Feature {
+  name: String!
+  level: Int!
+  desc: [String!]
+  class: [Class]
+}
