@@ -39,7 +39,7 @@ const Class = {
 const Subclass = {
   getFeatures(features) {
     // @TODO iterate over all features and return data.
-    return fetchResponseByUrl(features[0].url).then(res => res.json()).then(json => [transformKeyData(json)]);
+    return fetchResponseByUrl(features[0].url).then(json => [transformKeyData(json)]);
   }
 };
 
