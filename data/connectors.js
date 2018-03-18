@@ -16,30 +16,42 @@ function transformKeyData(data) {
   return _.mapKeys(data, (v, k) => _.camelCase(k))
 };
 
-function transformSubclassData(data) {
-
+function transformSubclassData(featureSets) {
+  return featureSets.map(fs => transformKeyData(fs));
 };
 
 const Class = {
   findAll() {
     return fetchResponseByPath('/classes/').then(json => {
-      return json.results
-    });
+      return json.results.map((entry, index) => {
+        return Object.assign({},entry, { id: index + 1 });
+      });
+    }
+    );
   },
   fetchById(args) {
     const { id } = args
-    return fetchResponseByPath(`/classes/${id}`).then(json => transformKeyData(json));
+    return fetchResponseByPath(`/classes/${id}`).then(json =>
+      transformKeyData(json)
+    );
   },
   getSubclasses(index) {
     const id = index;
-    return fetchResponseByPath(`/subclasses/${id}`).then(json => [transformKeyData(json)]);
+    return fetchResponseByPath(`/subclasses/${id}`).then(json =>
+      [transformKeyData(json)]
+    );
   }
 };
 
 const Subclass = {
   getFeatures(features) {
-    // @TODO iterate over all features and return data.
-    return fetchResponseByUrl(features[0].url).then(json => [transformKeyData(json)]);
+    const featurePromises = features.map(f => {
+      return fetchResponseByUrl(f.url);
+    });
+
+    return Promise.all(featurePromises).then(featureSets => {
+      return transformSubclassData(featureSets);
+    });
   }
 };
 
